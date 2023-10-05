@@ -1,32 +1,12 @@
-type FillArray<T, Amount extends number, Res extends T[] = []> = 
-    Res['length'] extends Amount ? Res : FillArray<T,Amount, [T, ...Res]>
-
-function repeatElement<T, Amount extends number>(el: T, amount: Amount): FillArray<T,Amount> {
-    return Array(amount).fill(el) as FillArray<T,Amount>
+function repeatElement<T, Amount extends number>(el: T, amount: Amount) {
+  return Array(amount).fill(el)
 }
 
-const repeatElementResult0 = repeatElement(5,5) //should be [number, number, number, number, number]
-const repeatElementResult1 = repeatElement(5 as const,5) //should be [5,5,5,5,5]
+const repeatElementResult0 = repeatElement(5, 5) //should be [number, number, number, number, number]
+const repeatElementResult1 = repeatElement(5 as const, 5) //should be [5,5,5,5,5]
 
-type ExtractResult<T, Keys extends (keyof T)[] | readonly (keyof T)[]> = Keys extends readonly [
-  infer Key extends keyof T,
-  ...infer Rest,
-]
-  ? Rest extends readonly (keyof T)[]
-    ? [T[Key], ...ExtractResult<T, Rest>]
-    : never
-  : Keys extends readonly [infer Key extends keyof T]
-  ? [T[Key]]
-  : Keys extends [infer Key extends keyof T, ...infer Rest]
-  ? Rest extends (keyof T)[]
-    ? [T[Key], ...ExtractResult<T, Rest>]
-    : never
-  : Keys extends [infer Key extends keyof T]
-  ? [T[Key]]
-  : T[keyof T][]
-
-function extractKeys<T, Keys extends (keyof T)[] | readonly (keyof T)[]>(obj: T, keys: Keys): ExtractResult<T, Keys> {
-  return keys.map((key) => obj[key]) as ExtractResult<T, Keys>
+function extractKeys<T, Keys extends (keyof T)[] | readonly (keyof T)[]>(obj: T, keys: Keys) {
+  return keys.map((key) => obj[key])
 }
 
 const extractionObject = {
@@ -50,11 +30,7 @@ const extractResult21 = extractResult2[1] // should be (1 | 2 | 3 | 4 | 5)
 type SingleArr = [string | number, any] | readonly [string | number, any]
 type Arr = SingleArr[] | readonly SingleArr[]
 
-type ObjectifyArraysReturn<T extends Arr> = T extends readonly [SingleArr, ...infer Rest extends Arr]
-  ? { [K in T[0][0]]: T[0][1] } & ObjectifyArraysReturn<Rest>
-  : { [K in T[0][0]]: T[0][1] }
-
-function objectifyArrays<T extends Arr>(arr: T): ObjectifyArraysReturn<T> {
+function objectifyArrays<T extends Arr>(arr: T) {
   return arr.reduce((acc: any, [key, value]) => {
     acc[key] = value
     return acc
